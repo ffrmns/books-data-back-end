@@ -64,7 +64,19 @@ const addBookDataHandler = (request, h) => {
   return response;
 };
 
-const getBooksListHandler = () => {};
+const getBooksListHandler = (request, h) => {
+  const bookDatasArray = [];
+  for (const {id: id, name: name, publisher: publisher} of bookdatas) {
+    bookDatasArray.push({id: id, name: name, publisher: publisher});
+  };
+  const response = h.response ({
+    status: 'success',
+    data: {
+      books: bookDatasArray,
+    },
+  });
+  return response;
+};
 const getBookDataHandler = () => {};
 const editBookDataHandler = () => {};
 const deleteBookDataHandler = () => {};
