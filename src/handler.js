@@ -77,7 +77,26 @@ const getBooksListHandler = (request, h) => {
   });
   return response;
 };
-const getBookDataHandler = () => {};
+
+const getBookDataHandler = (request, h) => {
+  const { bookId } = request.params;
+  const bookdata = bookdatas.filter((book) => book.id === bookId)[0];
+  if (bookdata !== undefined) {
+    return {
+      status: 'success',
+      data: {
+        book: bookdata,
+      },
+    };
+  }
+  const response = h.response({
+    status: 'fail',
+    message: 'Buku tidak ditemukan',
+  });
+  response.code(404);
+  return response;
+};
+
 const editBookDataHandler = () => {};
 const deleteBookDataHandler = () => {};
 
