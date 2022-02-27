@@ -26,12 +26,12 @@ const addBookDataHandler = (request, h) => {
     updatedAt,
   };
 
-  bookdatas.push(newBookData);
   const isFailedByName = name === undefined;
   const isFailedByPage = readPage > pageCount;
   const isSuccess = !isFailedByName && !isFailedByPage;
 
   if (isSuccess) {
+    bookdatas.push(newBookData);
     const response = h.response({
       status: 'success',
       message: 'Buku berhasil ditambahkan',
@@ -65,11 +65,33 @@ const addBookDataHandler = (request, h) => {
 };
 
 const getBooksListHandler = (request, h) => {
+  const { reading, finished, name } = request.query;
   const bookDatasArray = [];
-  for (const {id: id, name: name, publisher: publisher} of bookdatas) {
-    bookDatasArray.push({id: id, name: name, publisher: publisher});
-  };
-  const response = h.response ({
+  const isNoReadingFinishedNameQuery = reading === undefined
+    && finished === undefined
+    && name === undefined;
+  for (const {
+    id: idData,
+    name: nameData,
+    publisher: publisherData,
+    reading: readingData,
+    finished: finishedData,
+  } of bookdatas) {
+    const isDefinedName = name !== undefined && nameData !== undefined;
+    const isIncludedName = isDefinedName
+      ? nameData.toLowerCase().includes(name.toLowerCase())
+      : false;
+
+    const isMatched = (reading === '1' && readingData === true)
+      || (reading === '0' && readingData === false)
+      || (finished === '1' && finishedData === true)
+      || (finished === '0' && finishedData === false)
+      || isIncludedName;
+    if (isMatched || isNoReadingFinishedNameQuery) {
+      bookDatasArray.push({ id: idData, name: nameData, publisher: publisherData });
+    }
+  }
+  const response = h.response({
     status: 'success',
     data: {
       books: bookDatasArray,
@@ -131,7 +153,7 @@ const editBookDataHandler = (request, h) => {
   } if (!isFound) {
     const response = h.response({
       status: 'fail',
-      message: 'Gagal memperbarui buku. Id tidak ditemukan'
+      message: 'Gagal memperbarui buku. Id tidak ditemukan',
     });
     response.code(404);
     return response;
