@@ -66,17 +66,18 @@ const addBookDataHandler = (request, h) => {
 
 const getBooksListHandler = (request, h) => {
   const { reading, finished, name } = request.query;
-  const bookDatasArray = [];
+  const bookDatasList = [];
   const isNoReadingFinishedNameQuery = reading === undefined
     && finished === undefined
     && name === undefined;
-  for (const {
-    id: idData,
-    name: nameData,
-    publisher: publisherData,
-    reading: readingData,
-    finished: finishedData,
-  } of bookdatas) {
+  bookdatas.map((book) => {
+    const {
+      id: idData,
+      name: nameData,
+      publisher: publisherData,
+      reading: readingData,
+      finished: finishedData,
+    } = book;
     const isDefinedName = name !== undefined && nameData !== undefined;
     const isIncludedName = isDefinedName
       ? nameData.toLowerCase().includes(name.toLowerCase())
@@ -88,13 +89,14 @@ const getBooksListHandler = (request, h) => {
       || (finished === '0' && finishedData === false)
       || isIncludedName;
     if (isMatched || isNoReadingFinishedNameQuery) {
-      bookDatasArray.push({ id: idData, name: nameData, publisher: publisherData });
+      bookDatasList.push({ id: idData, name: nameData, publisher: publisherData });
     }
-  }
+    return bookDatasList;
+  });
   const response = h.response({
     status: 'success',
     data: {
-      books: bookDatasArray,
+      books: bookDatasList,
     },
   });
   return response;
