@@ -1,5 +1,5 @@
 const { nanoid } = require('nanoid');
-const bookdatas = require('./bookdatas');
+const bookDatas = require('./bookDatas');
 
 const addBookDataHandler = (request, h) => {
   const {
@@ -31,7 +31,7 @@ const addBookDataHandler = (request, h) => {
   const isSuccess = !isFailedByName && !isFailedByPage;
 
   if (isSuccess) {
-    bookdatas.push(newBookData);
+    bookDatas.push(newBookData);
     const response = h.response({
       status: 'success',
       message: 'Buku berhasil ditambahkan',
@@ -70,7 +70,7 @@ const getBooksListHandler = (request, h) => {
   const isNoReadingFinishedNameQuery = reading === undefined
     && finished === undefined
     && name === undefined;
-  bookdatas.map((book) => {
+  bookDatas.map((book) => {
     const {
       id: idData,
       name: nameData,
@@ -104,7 +104,7 @@ const getBooksListHandler = (request, h) => {
 
 const getBookDataHandler = (request, h) => {
   const { bookId } = request.params;
-  const bookdata = bookdatas.filter((book) => book.id === bookId)[0];
+  const bookdata = bookDatas.filter((book) => book.id === bookId)[0];
   if (bookdata !== undefined) {
     return {
       status: 'success',
@@ -134,7 +134,7 @@ const editBookDataHandler = (request, h) => {
     reading,
   } = request.payload;
   const updatedAt = new Date().toISOString();
-  const index = bookdatas.findIndex((book) => book.id === bookId);
+  const index = bookDatas.findIndex((book) => book.id === bookId);
   const isFound = index !== -1;
   const isPageCorrect = readPage <= pageCount;
   const isNameDefined = name !== undefined;
@@ -160,8 +160,8 @@ const editBookDataHandler = (request, h) => {
     response.code(404);
     return response;
   }
-  bookdatas[index] = {
-    ...bookdatas[index],
+  bookDatas[index] = {
+    ...bookDatas[index],
     name,
     year,
     author,
@@ -182,9 +182,9 @@ const editBookDataHandler = (request, h) => {
 
 const deleteBookDataHandler = (request, h) => {
   const { bookId } = request.params;
-  const indexToBeDeleted = bookdatas.findIndex((book) => book.id === bookId);
+  const indexToBeDeleted = bookDatas.findIndex((book) => book.id === bookId);
   if (indexToBeDeleted !== -1) {
-    bookdatas.splice(indexToBeDeleted, 1);
+    bookDatas.splice(indexToBeDeleted, 1);
     const response = h.response({
       status: 'success',
       message: 'Buku berhasil dihapus',
